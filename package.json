@@ -1,0 +1,19 @@
+{
+  "name": "omath",
+  "version": "0.0.1",
+  "description": "Math library",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run"
+  },  
+  "keywords": ["math", "matrix"],
+  "author": "omt",
+  "license": "MIT",
+  "devDependencies": {
+    "@vitest/ui": "0.25.2",
+    "vitest": "0.25.2"
+  }
+}
