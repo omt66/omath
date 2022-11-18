@@ -1,5 +1,5 @@
 import { expect, test, describe } from "vitest"
-import { Matrix } from "./matrix"
+import { ERROR, Matrix } from "./matrix"
 
 describe("Matrix tests", () => {
     test("rows & cols", () => {
@@ -13,16 +13,33 @@ describe("Matrix tests", () => {
         expect(m2.cols).toBe(2)
     })
 
-    test("zero matrix 2x3", () => {
-        let m = Matrix.zero(2, 3)
+    test("zeros matrix 2x3", () => {
+        let m = Matrix.zeros(2, 3)
         expect(m.data).toStrictEqual([
             [0, 0, 0],
             [0, 0, 0]
         ])
     })
 
-    test("one matrix 3x3", () => {
-        let m = Matrix.one(3, 3)
+    test("zeros matrix 3x3", () => {
+        let m = Matrix.zeros(3)
+        expect(m.data).toStrictEqual([
+            [0, 0, 0],
+            [0, 0, 0],
+            [0, 0, 0]
+        ])
+    })
+
+    test("ones matrix 2x3", () => {
+        let m = Matrix.ones(2, 3)
+        expect(m.data).toStrictEqual([
+            [1, 1, 1],
+            [1, 1, 1]
+        ])
+    })
+
+    test("ones matrix 3x3", () => {
+        let m = Matrix.ones(3)
         expect(m.data).toStrictEqual([
             [1, 1, 1],
             [1, 1, 1],
@@ -52,6 +69,15 @@ describe("Matrix tests", () => {
     test("create from raw data", () => {
         let data = [[1, 2, 3], [4, 5, 6]]
         let m = new Matrix({ data })
+        expect(m.data).toStrictEqual([
+            [1, 2, 3],
+            [4, 5, 6]
+        ])
+    })
+
+    test("create (from static method)", () => {
+        let data = [[1, 2, 3], [4, 5, 6]]
+        let m = Matrix.create(data)
         expect(m.data).toStrictEqual([
             [1, 2, 3],
             [4, 5, 6]
@@ -113,6 +139,48 @@ describe("Matrix tests", () => {
         ])
     })
 
+    test("subtractions", () => {
+        let m1 = new Matrix({ data: [[1, 2], [3, 4]] })
+        let m2 = new Matrix({ data: [[8, 7], [2, 1]] })
+        let m3 = m1.sub(m2)
+
+        expect(m3.data).toStrictEqual([
+            [-7, -5],
+            [1, 3],
+        ])
+    })
+
+    test("multiplications 1", () => {
+        let m1 = new Matrix({ data: [[1, 2], [3, 4]] })
+        let m2 = new Matrix({ data: [[5, 6], [7, 8]] })
+        let m3 = m1.mul(2)  // Scalar multiplication
+        let m4 = m1.mul(m2) // Matrix multiplication
+
+        expect(m3.data).toStrictEqual([
+            [2, 4],
+            [6, 8],
+        ])
+
+        expect(m4.data).toStrictEqual([
+            [19, 22],
+            [43, 50],
+        ])
+    })
+
+    test("multiplications 2", () => {
+        let m1 = new Matrix({ data: [[1, 2, 3], [4, 5, 6]] })
+        let m2 = new Matrix({ data: [[9, 8], [7, 6], [5, 4]] })
+        let m3 = m1.mul(m2)
+        let m4 = Matrix.create([[1, 2]])
+
+        expect(m3.data).toStrictEqual([
+            [38, 32],
+            [101, 86],
+        ])
+
+        expect(() => m3.mul(m4)).toThrow(ERROR.MATRIX_DIMENSIONS)
+    })
+
     test("transpose ", () => {
         let m = new Matrix({ data: [[1, 2, 3], [4, 5, 6]] })
         let t = m.transpose()
@@ -166,12 +234,31 @@ describe("Matrix tests", () => {
 
     test("singular matrix", () => {
         let m1 = new Matrix({ data: [[1, 2, 3], [4, 5, 6], [7, 8, 9]] })
-        expect(() => m1.inverse()).toThrow("Matrix is singular, therefore not invertable!")
+        expect(() => m1.inverse()).toThrow(ERROR.MATRIX_IS_SINGULAR)
     })
 
     test("determinant", () => {
-        let m = new Matrix({ data: [[1, 2], [3, 4]] })
+        let m = new Matrix({ data: [[1991]] })
         let d = m.determinant()
-        expect(d).toBe(-2)
+        expect(d).toBe(1991)
+
+        m = new Matrix({ data: [[1, 2], [-3, 4]] })
+        d = m.determinant()
+        expect(d).toBe(10)
+
+        m = new Matrix({ data: [[1, 2, 3], [-3, -4, 5], [9, 8, 7]] })
+        d = m.determinant()
+        expect(d).toBe(100)
+    })
+
+
+    test("forEach", () => {
+        let m1 = Matrix.create([[1, 2], [3, 4]])
+        let sum = 0
+        m1.forEach((v, r, c) =>{
+            console.log("v,r,c", v, r, c)
+            sum += v
+        })
+        expect(sum).toBe(10)
     })
 }) 
