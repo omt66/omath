@@ -213,7 +213,13 @@ describe("Matrix tests", () => {
         let m3 = new Matrix({ data: [[-2, 8, -5], [3, -11, 7], [9, -34, 21]] })
 
         // Approximately equal!
+        expect(m2.equala(m3)).toBe(true)
         expect(m2.approximatelyEqual(m3)).toBe(true)
+    })
+
+    test("inverse 3", () => {
+        let m1 = new Matrix({ data: [[7, 2, 1], [0, 3, -1], [-3, 4, -2], [2, 1, 3, 8]] })
+        expect(() => m1.inverse()).toThrow(ERROR.MATRIX_MUST_BE_SQUARE)
     })
 
     test("equal", () => {
@@ -237,9 +243,11 @@ describe("Matrix tests", () => {
         expect(() => m1.inverse()).toThrow(ERROR.MATRIX_IS_SINGULAR)
     })
 
-    test("determinant", () => {
-        let m = new Matrix({ data: [[1991]] })
-        let d = m.determinant()
+    test("determinant 1", () => {
+        let m, d
+        
+        m = new Matrix({ data: [[1991]] })
+        d = m.determinant()
         expect(d).toBe(1991)
 
         m = new Matrix({ data: [[1, 2], [-3, 4]] })
@@ -249,6 +257,18 @@ describe("Matrix tests", () => {
         m = new Matrix({ data: [[1, 2, 3], [-3, -4, 5], [9, 8, 7]] })
         d = m.determinant()
         expect(d).toBe(100)
+    })
+
+    test("determinant 2", () => {
+        let m, d
+
+        m = new Matrix({ data: [[1, 2, 3, -5], [-3, -4, 5, 7], [-10, 9, 8, 7], [4, 3, 2, 1]] })
+        d = m.determinant()
+        expect(d).toBe(-3980)
+
+        m = new Matrix({ data: [[1, 2, 3, -5, 8], [-3, -4, 5, 7, 2], [4, -10, 9, 5, 7], [5, 4, 3, 2, 1], [9, 6, 8, 7, 1]] })
+        d = m.determinant()
+        expect(d).toBe(-5586)
     })
 
 
